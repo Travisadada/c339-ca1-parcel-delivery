@@ -1,0 +1,46 @@
+
+name: Unit Tests
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "**.py"
+      - "pytest.ini"
+      - ".github/workflows/tests.yml"
+  pull_request:
+    paths:
+      - "**.py"
+      - "pytest.ini"
+      - ".github/workflows/tests.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pytest and pytest-html
+        run: pip install pytest pytest-html
+
+      - name: Run pytest
+        run: python -m pytest -v --html=report.html --self-contained-html
+
+      - name: Upload HTML test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-html-report
+          path: report.html
