@@ -1,5 +1,6 @@
+
 import pytest
-from parcel_acceptance import is_parcel_accepted
+from src.parcel_acceptance import is_parcel_accepted
 
 
 @pytest.mark.parametrize("weight, length", [
